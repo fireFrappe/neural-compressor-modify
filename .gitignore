@@ -19,3 +19,4 @@ lpot_workspace/
 .torch/
 nc_workspace/
 saved_results/
+*.pt
