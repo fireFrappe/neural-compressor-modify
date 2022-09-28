@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neural Compressor as JupyterLab Extension &mdash; Intel® Neural Compressor  documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> Intel® Neural Compressor
+          </a>
+              <div class="version">
+                1.14
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Intel® Neural Compressor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/examples_readme.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-documentation/apis.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/doclist.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/releases_info.html">Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/contributions.html">Contribution Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/legal_information.html">Legal Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/security_policy.html">Security Policy</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/intel/neural-compressor">Intel® Neural Compressor repository</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Intel® Neural Compressor</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Neural Compressor as JupyterLab Extension</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/neural_coder/extensions/readme.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="neural-compressor-as-jupyterlab-extension">
+<h1>Neural Compressor as JupyterLab Extension<a class="headerlink" href="#neural-compressor-as-jupyterlab-extension" title="Permalink to this headline">¶</a></h1>
+<p>A JupyterLab Extension library supporting Neural Coder, a novel feature powered by Intel® Neural Compressor to further simplify performance optimizations of Deep Learning models.</p>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p><strong>Installation on Linux</strong></p>
+<div class="highlight-Shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># To install the extension, execute:</span>
+pip install neural_compressor_ext_lab
+<span class="c1"># To install alibaba-blade version, execute:</span>
+pip install neural_compressor_ext_lab_alibaba
+</pre></div>
+</div>
+</div>
+<div class="section" id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p><strong>Access Jupyter Lab remotely using SSH</strong></p>
+<ul class="simple">
+<li><p>Launch the Jupyter Lab service on the remote server:</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter lab --no-browser --port<span class="o">=</span><span class="m">8889</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Start SSH in a local terminal:</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ssh -N -f -L localhost:8888:localhost:8889 username@serverIP
+</pre></div>
+</div>
+<p><strong>Access Jupyter Lab locally</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter lab
+</pre></div>
+</div>
+<p><strong>Jupyter Front-End</strong></p>
+<ul class="simple">
+<li><p>As shown in the drop-down list, supported features include INC Enable INT8(Static), INC Enable INT8(Dynamic), INC Enable BF16, and INC Auto Enable &amp; Benchmark. The first three features enable specific quantization features into DL scripts. The last feature automatically enables all quantization features on a PyTorch model script and automatically evaluates the best performance on the model. It is a code-free solution that can help users enable quantization algorithms on a PyTorch model with no manual coding needed.</p></li>
+</ul>
+ <img src="./docs/1.png" alt="Architecture"><ul class="simple">
+<li><p>Click the run button at the left side of the drop-down list to start. After finishing, you can see the code changes for specific optimization enabling as shown in the figure below.</p></li>
+</ul>
+<img src="./docs/2.png" alt="Architecture"><ul class="simple">
+<li><p>The last option requires you to enter additional parameters needed to run the DL script.</p></li>
+</ul>
+ <img src="./docs/3.png" alt="Architecture"><ul class="simple">
+<li><p>In the output area below the code cell, you can see the execution progress of automatic quantization.</p></li>
+</ul>
+ <img src="./docs/4.png" alt="Architecture"><ul class="simple">
+<li><p>After finishing, you can see the code changes for best-performing optimization enabling.</p></li>
+</ul>
+ <img src="./docs/5.png" alt="Architecture"><p><strong>neural_compressor_ext_lab_alibaba</strong></p>
+<p>It is a subversion dedicated to support Alibaba Blade-DISC, similar in installation and usage to the one mentioned above.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Intel® Neural Compressor.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

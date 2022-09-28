@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neural Coder &mdash; Intel® Neural Compressor  documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Intel® Neural Compressor
+          </a>
+              <div class="version">
+                1.14
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">Intel® Neural Compressor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../docs/examples_readme.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-documentation/apis.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../docs/doclist.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../docs/releases_info.html">Release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../docs/contributions.html">Contribution Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../docs/legal_information.html">Legal Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../docs/security_policy.html">Security Policy</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/intel/neural-compressor">Intel® Neural Compressor repository</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Intel® Neural Compressor</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Neural Coder</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/neural_coder/README.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="neural-coder">
+<h1>Neural Coder<a class="headerlink" href="#neural-coder" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="what-do-we-offer">
+<h2>What do we offer?<a class="headerlink" href="#what-do-we-offer" title="Permalink to this headline">¶</a></h2>
+<p>Neural Coder is a novel component under Intel® Neural Compressor to further simplify the deployment of deep learning models via one-click automated code changes for device switch (e.g., CUDA to CPU) and optimization enabling. Subsequently, Neural Coder can also perform automated benchmark on all applicable optimization sets acquired from the automated enabling, and evaluate for the best out-of-box performance.</p>
+<p>Neural Coder leverages static program analysis techniques and heuristic optimization rules to simplify the usage of various Deep Learning optimization APIs for increasing computation efficiency of AI models and improving user experience for general AI customers. We demonstrate great improvement of developer productivity and aim to facilitate enhanced Deep Learning acceleration adoption via this toolkit.</p>
+<p>Neural Coder helps you code Deep Learning optimizations automatically into your scripts. For example, to apply</p>
+<ul class="simple">
+<li><p>Automatic Mixed Precision (torch.cpu.amp.autocast)</p></li>
+<li><p>JIT Script computation graph transformation (torch.jit.script)</p></li>
+<li><p>Channels Last memory format transformation (torch.channels_last)</p></li>
+</ul>
+<p>simultaneously on below PyTorch evaluation code, we generate the optimized code in one-click by detecting the correct position to insert the correct API code lines:</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>  import torch
+  import torchvision.models as models
+  my_model = models.resnet50(pretrained=True)
+<span class="gi">+ import torch</span>
+<span class="gi">+ with torch.no_grad():</span>
+<span class="gi">+     my_model = my_model.to(memory_format=torch.channels_last)</span>
+<span class="gi">+ import torch</span>
+<span class="gi">+ with torch.no_grad():</span>
+<span class="gi">+     my_model.eval()</span>
+<span class="gi">+     my_model = torch.jit.script(my_model)</span>
+<span class="gi">+     my_model = torch.jit.freeze(my_model)</span>
+  my_model.eval()
+  batch_size = 112
+  input = torch.rand(batch_size, 3, 224, 224)
+  with torch.no_grad():
+<span class="gi">+     import torch</span>
+<span class="gi">+     with torch.cpu.amp.autocast(enabled=True, dtype=torch.bfloat16):</span>
+          my_model(input)
+</pre></div>
+</div>
+</div>
+<div class="section" id="getting-started">
+<h2>Getting Started!<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="auto-quant-feature">
+<h3>Auto-Quant Feature<a class="headerlink" href="#auto-quant-feature" title="Permalink to this headline">¶</a></h3>
+<p>We provide a feature named Auto-Quant that helps automatically enable quantization features on a PyTorch model script and automatically evaluates for the best performance on the model. It is a code-free solution that can help users enable quantization algorithms on a PyTorch model with no manual coding needed. Supported features include Post-Training Static Quantization, Post-Training Dynamic Quantization, and Mixed Precision. For more details please refer to this <a class="reference internal" href="docs/AutoQuant.html"><span class="doc">guide</span></a>.</p>
+</div>
+<div class="section" id="general-guide">
+<h3>General Guide<a class="headerlink" href="#general-guide" title="Permalink to this headline">¶</a></h3>
+<p>We currently provide 3 main user-facing APIs: enable, bench and superbench.</p>
+<div class="section" id="enable">
+<h4>Enable<a class="headerlink" href="#enable" title="Permalink to this headline">¶</a></h4>
+<p>Users can use <code class="docutils literal notranslate"><span class="pre">enable()</span></code> to enable specific features into DL scripts:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neural_coder</span> <span class="k">import</span> <span class="n">enable</span>
+<span class="n">enable</span><span class="p">(</span>
+    <span class="n">code</span><span class="o">=</span><span class="s2">&quot;neural_coder/examples/vision/resnet50.py&quot;</span><span class="p">,</span>
+    <span class="n">features</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">&quot;pytorch_jit_script&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pytorch_channels_last&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>To run benchmark directly on the optimization together with the enabling:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neural_coder</span> <span class="k">import</span> <span class="n">enable</span>
+<span class="n">enable</span><span class="p">(</span>
+    <span class="n">code</span><span class="o">=</span><span class="s2">&quot;neural_coder/examples/vision/resnet50.py&quot;</span><span class="p">,</span>
+    <span class="n">features</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">&quot;pytorch_jit_script&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pytorch_channels_last&quot;</span>
+    <span class="p">],</span>
+    <span class="n">run_bench</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="bench">
+<h4>Bench<a class="headerlink" href="#bench" title="Permalink to this headline">¶</a></h4>
+<p>To run benchmark on your code with an existing patch:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neural_coder</span> <span class="k">import</span> <span class="n">bench</span>
+<span class="n">bench</span><span class="p">(</span>
+    <span class="n">code</span><span class="o">=</span><span class="s2">&quot;neural_coder/examples/vision/resnet50.py&quot;</span><span class="p">,</span>
+    <span class="n">patch_path</span><span class="o">=</span><span class="s2">&quot;$</span><span class="si">{your_patch_path}</span><span class="s2">&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="superbench">
+<h4>SuperBench<a class="headerlink" href="#superbench" title="Permalink to this headline">¶</a></h4>
+<p>To sweep on optimization sets with a fixed benchmark configuration:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neural_coder</span> <span class="k">import</span> <span class="n">superbench</span>
+<span class="n">superbench</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="s2">&quot;neural_coder/examples/vision/resnet50.py&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To sweep on benchmark configurations for a fixed optimization set:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neural_coder</span> <span class="k">import</span> <span class="n">superbench</span>
+<span class="n">superbench</span><span class="p">(</span>
+    <span class="n">code</span><span class="o">=</span><span class="s2">&quot;neural_coder/examples/vision/resnet50.py&quot;</span><span class="p">,</span>
+    <span class="n">sweep_objective</span><span class="o">=</span><span class="s2">&quot;bench_config&quot;</span><span class="p">,</span>
+    <span class="n">bench_feature</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">&quot;pytorch_jit_script&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pytorch_channels_last&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="contact">
+<h2>Contact<a class="headerlink" href="#contact" title="Permalink to this headline">¶</a></h2>
+<p>Please contact us at <a class="reference external" href="mailto:inc&#46;maintainers&#37;&#52;&#48;intel&#46;com">inc<span>&#46;</span>maintainers<span>&#64;</span>intel<span>&#46;</span>com</a> for any Neural Coder related question.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Intel® Neural Compressor.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
