@@ -1,0 +1,65 @@
+model:
+  name: imagenet
+  framework: pytorch
+  inputs: []
+  outputs: []
+device: cpu
+evaluation:
+  accuracy:
+    metric:
+      topk: 1
+    dataloader:
+      batch_size: 30
+      dataset:
+        ImageFolder:
+          root: C:\Users\Local_Admin\Work\Dataset\imagenet\val
+      transform:
+        Resize:
+          size: 256
+        CenterCrop:
+          size: 224
+        ToTensor: {}
+        Normalize:
+          mean:
+          - 0.485
+          - 0.456
+          - 0.406
+          std:
+          - 0.229
+          - 0.224
+          - 0.225
+      last_batch: rollover
+      shuffle: false
+      distributed: false
+    iteration: -1
+    multi_metrics: null
+  performance:
+    configs:
+      cores_per_instance: 4
+      num_of_instance: 7
+      kmp_affinity: granularity=fine,verbose,compact,1,0
+    dataloader:
+      batch_size: 1
+      dataset:
+        ImageFolder:
+          root: C:\Users\Local_Admin\Work\Dataset\imagenet\val
+      transform:
+        Resize:
+          size: 256
+        CenterCrop:
+          size: 224
+        ToTensor: {}
+        Normalize:
+          mean:
+          - 0.485
+          - 0.456
+          - 0.406
+          std:
+          - 0.229
+          - 0.224
+          - 0.225
+      last_batch: rollover
+      shuffle: false
+      distributed: false
+    iteration: -1
+    warmup: 5

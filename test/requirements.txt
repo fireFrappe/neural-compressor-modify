@@ -1,0 +1,23 @@
+intel-tensorflow
+onnx
+onnxruntime
+--find-links https://download.pytorch.org/whl/torch_stable.html
+torch
+torchvision
+mxnet-mkl
+numpy
+neural-compressor
+pandas
+tf_slim
+pillow>=8.2.0
+transformers<=4.12.3
+tensorflow_model_optimization
+sigopt
+horovod
+tensorflow-addons
+onnxruntime-extensions
+autograd==1.4
+fvcore==0.1.5.post20220119
+ofa==0.1.0.post202203231606
+pymoo==0.5.0
+intel-extension-for-pytorch
