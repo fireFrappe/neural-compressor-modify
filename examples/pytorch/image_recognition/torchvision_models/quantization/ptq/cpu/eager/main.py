@@ -15,6 +15,7 @@ import torch.multiprocessing as mp
 import torch.utils.data
 import torch.utils.data.distributed
 import torchvision.transforms as transforms
+from torchvision.transforms import Lambda
 import torchvision.datasets as datasets
 import torchvision.models.quantization as models
 
@@ -94,6 +95,56 @@ parser.add_argument('--int8', dest='int8', action='store_true',
 
 best_acc1 = 0
 
+import glob
+from PIL import Image
+import numpy as np
+
+gray_list = [
+    "ILSVRC2012_val_00000889.JPEG",
+    "ILSVRC2012_val_00000896.JPEG",
+    "ILSVRC2012_val_00000034.JPEG",
+    "ILSVRC2012_val_00000532.JPEG",
+    "ILSVRC2012_val_00000296.JPEG",
+    "ILSVRC2012_val_00000317.JPEG",
+    "ILSVRC2012_val_00000560.JPEG",
+    "ILSVRC2012_val_00000107.JPEG"
+]
+
+class MyDataset(torch.utils.data.Dataset):
+    def __init__(self, root, transform=None):
+        self.root = root
+        assert os.path.exists(self.root), "Datapath doesn't exist!"
+
+        self.transform = transform
+
+        self.image_list = []
+        with open(os.path.join(self.root, "val_1000.txt"), 'r') as label_file:
+            # self.image_list = {img: int(label) for img, label in label_file.readlines().strip().split(' ')}
+            for line in label_file.readlines():
+                img, label = line.strip().split(" ")
+
+                with Image.open(os.path.join(self.root, "img_1000", img)) as image:
+                    if len(image.split()) == 3:
+                        self.image_list.append((image, label))
+                        # self.image_list.append((os.path.join(self.root, "img_1000", img), label))
+    def __getitem__(self, index):
+        sample = self.image_list[index]
+        label = int(sample[1])
+        # with Image.open(sample[0]) as image:
+        #     if self.transform is not None and len(image.split()) == 3:
+        #         image = self.transform(image)
+        #     return image, label
+
+        if self.transform is not None:
+            image = self.transform(sample[0])
+        return image, label
+    def __len__(self):
+        return len(self.image_list)
+
+
+def my_transform(x):
+    return torch.tensor(int(x), dtype=torch.float)
+
 
 def main():
     args = parser.parse_args()
@@ -134,12 +185,12 @@ def main():
             print("=> no checkpoint found at '{}'".format(args.resume))
 
     # Data loading code
-    traindir = os.path.join(args.data, 'train')
-    valdir = os.path.join(args.data, 'val')
+    traindir = os.path.join(args.data)
+    valdir = os.path.join(args.data)
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
 
-    train_dataset = datasets.ImageFolder(
+    train_dataset = MyDataset(
         traindir,
         transforms.Compose([
             transforms.RandomResizedCrop(224),
@@ -152,7 +203,13 @@ def main():
         train_dataset, batch_size=args.batch_size, shuffle=True,
         num_workers=args.workers, pin_memory=True, sampler=None)
 
-    val_dataset = datasets.ImageFolder(valdir, transforms.Compose([
+    # val_dataset = datasets.ImageFolder(valdir, transform=transforms.Compose([
+    #         transforms.Resize(256),
+    #         transforms.CenterCrop(224),
+    #         transforms.ToTensor(),
+    #         normalize,
+    #     ]), target_transform=my_transform)
+    val_dataset = MyDataset(valdir, transform=transforms.Compose([
             transforms.Resize(256),
             transforms.CenterCrop(224),
             transforms.ToTensor(),
@@ -160,8 +217,7 @@ def main():
         ]))
     val_loader = torch.utils.data.DataLoader(
         val_dataset,
-        batch_size=args.batch_size, shuffle=False,
-        num_workers=args.workers, pin_memory=True)
+        batch_size=args.batch_size, shuffle=False, num_workers=args.workers, pin_memory=True)
 
     print("Have createn the dataloader")
 
@@ -175,6 +231,9 @@ def main():
         model.fuse_model()
         quantizer = Quantization("./conf.yaml")
         quantizer.model = common.Model(model)
+        quantizer.train_dataloader = train_loader
+        quantizer.calib_dataloader = val_loader
+        quantizer.eval_dataloader = val_loader
         q_model = quantizer.fit()
         q_model.save(args.tuned_checkpoint)
         return
@@ -249,6 +308,7 @@ def validate(val_loader, model, criterion, args):
 
     with torch.no_grad():
         for i, (input, target) in enumerate(val_loader):
+            # print(input, target)
             if i >= args.warmup_iter:
                 start = time.time()
             if args.gpu is not None:
